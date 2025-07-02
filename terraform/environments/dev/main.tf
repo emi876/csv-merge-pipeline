@@ -13,11 +13,10 @@ module "output_bucket" {
 module "lambda" {
   source = "../../modules/lambda"
 
-  # Required — no defaults
-  input_bucket_name  = module.input_bucket.s3_bucket_name
-  input_bucket_arn   = module.input_bucket.s3_bucket_arn
-  output_bucket_name = module.output_bucket.s3_bucket_name
-  output_bucket_arn  = module.output_bucket.s3_bucket_arn
-
-  lambda_directory = "${path.module}/../../../lambda_function"
+  input_bucket_name   = module.input_bucket.s3_bucket_name
+  input_bucket_arn    = module.input_bucket.s3_bucket_arn
+  output_bucket_name  = module.output_bucket.s3_bucket_name
+  output_bucket_arn   = module.output_bucket.s3_bucket_arn
+  lambda_directory    = "${path.module}/../../../lambda_function"
+  schedule_expression = "cron(0 13 * * ? *)"
 }
