@@ -1,0 +1,42 @@
+name: Terraform Pull Request
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  terraform-pr-dev:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code from branch
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.OIDC_ROLE }}
+          aws-region: us-east-1
+          role-session-name: github-oidc-tf-dev
+
+      - name: Configure terraform for use
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.5
+
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v3
+        with:
+          tflint_version: v0.44.1
+
+      - name: Terraform Lint
+        run: tflint --init && tflint .
+
+      - name: Terraform Plan
+        id: plan
+        run: ./terraform.sh dev plan
+        continue-on-error: false

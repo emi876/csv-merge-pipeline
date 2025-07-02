@@ -1,0 +1,45 @@
+name: Deployment
+on:
+  push:
+    branches: [main]
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  deployment-dev:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code from branch
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.OIDC_ROLE_DEV }}
+          aws-region: us-east-1
+          role-session-name: github-oidc-tf-dev
+
+      - name: Configure terraform for use
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.5
+          terraform_wrapper: false
+
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: v0.52.0
+
+      - name: Terraform Apply
+        id: apply
+        run: ./terraform.sh dev apply
+        continue-on-error: false
+
+      - name: Upload test CSVs to input S3 bucket
+        run: |
+          aws s3 cp sample_data/SF_HOMELESS_ANXIETY.csv s3://emi-csv-input-dev/SF_HOMELESS_ANXIETY.csv
+          aws s3 cp sample_data/SF_HOMELESS_DEMOGRAPHICS.csv s3://emi-csv-input-dev/SF_HOMELESS_DEMOGRAPHICS.csv
