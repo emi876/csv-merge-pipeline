@@ -108,3 +108,14 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+# Ignore auto-generated directories and dependencies
+**/bin/
+**/boto3*/
+**/botocore*
+**/dateutil/
+**/jmespath*/
+**/python_dateutil*
+**/s3transfer*/
+**/six*
+**/urllib3*

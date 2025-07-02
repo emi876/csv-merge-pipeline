@@ -19,5 +19,5 @@ module "lambda" {
   output_bucket_name = module.output_bucket.s3_bucket_name
   output_bucket_arn  = module.output_bucket.s3_bucket_arn
 
-  lambda_directory = "${path.module}/../../../lambda/csv_lambda"
+  lambda_directory = "${path.module}/../../../lambda_function"
 }

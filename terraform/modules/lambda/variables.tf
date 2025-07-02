@@ -74,13 +74,13 @@ variable "output_bucket_name" {
 variable "anxiety_key" {
   description = "The key for the anxiety data in the output file"
   type        = string
-  default     = "SF_ANXIETY.csv"
+  default     = "SF_HOMELESS_ANXIETY.csv"
 }
 
 variable "demographics_key" {
   description = "The key for the demographics data in the output file"
   type        = string
-  default     = "SF_HOMLESS_DEMOGRAPHICS.csv"
+  default     = "SF_HOMELESS_DEMOGRAPHICS.csv"
 }
 
 variable "output_key" {

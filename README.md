@@ -36,7 +36,7 @@ This is a pilot solution for a nonprofit analyzing anxiety levels across shelter
 ### Requirements
 
 - AWS CLI authenticated (`aws sts get-caller-identity`)
-- Terraform v1.3+ installed
+- Terraform v1.5+ installed
 - Bash 5+, GNU coreutils
 
 ### Deploy Infrastructure
@@ -86,9 +86,9 @@ Lambda reads these from environment variables:
 
 ---
 
-## Querying the Data
+## Querying the Data (Future State)
 
-Once the Glue Crawler runs, Athena can query the merged output using standard SQL:
+Once the Glue Crawler is implemented and runs, Athena can query the merged output using standard SQL. This enables analytical insights directly from S3.
 
 ```sql
 SELECT shelter_name, anxiety_level, date
@@ -108,7 +108,7 @@ ORDER BY date DESC;
 
 ## Refresh Logic
 
-This pipeline uses **EventBridge** to re-run on a schedule (e.g., daily). This ensures the merged dataset stays current without relying on S3 event notifications.
+This pipeline uses **EventBridge** to re-run on a schedule (e.g., daily). This ensures the merged dataset stays current without relying on S3 event notifications. Since the dataset does not change frequently this seems like an appropriate frequency with which to run the Lambda.
 
 ---
 
@@ -122,7 +122,8 @@ This pipeline uses **EventBridge** to re-run on a schedule (e.g., daily). This e
 
 ## Next Steps (for scaling)
 
-- Add Glue partitioning by date
-- Version merged output with timestamped S3 keys
-- Add retry/dead-letter config to Lambda
-- CI/CD: extend to deploy Lambda code directly via GitHub Actions
+- Data Querying: Add Glue Crawler and Athena integration to make the merged output directly queryable via SQL. This includes defining Glue tables and an Athena database.
+- Data Partitioning: Add Glue partitioning by date to the merged output for improved query performance and cost efficiency.
+- Output Versioning: Implement versioning for merged output with timestamped S3 keys to maintain historical data.
+- Error Handling & Resilience: Add retry/dead-letter queue (DLQ) configuration to Lambda for robust error handling.
+- CI/CD Enhancement: Extend the GitHub Actions workflow to deploy Lambda code changes directly via the pipeline (e.g., automatically update filename and source_code_hash in Terraform on code commits).
